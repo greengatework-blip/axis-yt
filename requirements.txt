@@ -1,0 +1,8 @@
+﻿moviepy==1.0.3
+matplotlib
+numpy
+pillow
+tqdm
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2

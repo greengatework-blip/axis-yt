@@ -1,0 +1,19 @@
+﻿# Python
+venv/
+__pycache__/
+*.pyc
+
+# Outputs / logs
+out/
+logs/
+*.mp4
+
+# ffmpeg bin（各PCで配置）
+bin/
+
+# Secrets
+client_secret*.json
+client_secret.json
+token.json
+*.pem
+.env
