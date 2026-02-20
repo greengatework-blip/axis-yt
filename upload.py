@@ -1,4 +1,4 @@
-# upload.py - upload out/YYYY-MM-DD/short.mp4 to YouTube using meta.json
+﻿# upload.py - upload out/YYYY-MM-DD/short.mp4 to YouTube using meta.json
 import json
 from datetime import datetime, timezone
 from pathlib import Path

@@ -60,6 +60,25 @@ HOOKS = [
 # ----------------------------
 ROOT = Path("C:/AXIS_YT")
 OUT_ROOT = ROOT / "out"
+
+# AXIS_DATE single source of truth (global)
+import os as _os
+_axis_date = _os.environ.get("AXIS_DATE")
+if not _axis_date:
+    from datetime import datetime as _dt
+    _axis_date = _dt.now().strftime("%Y-%m-%d")
+outdir = OUT_ROOT / _axis_date
+outdir.mkdir(parents=True, exist_ok=True)
+
+
+# AXIS_DATE override (single source of truth for out/<date>)
+import os as _os
+_axis_date = _os.environ.get('AXIS_DATE')
+if not _axis_date:
+    import datetime as _dt
+    _axis_date = _dt.date.today().isoformat()
+outdir.mkdir(parents=True, exist_ok=True)
+
 OUT_ROOT.mkdir(parents=True, exist_ok=True)
 
 
@@ -121,8 +140,12 @@ def main():
     now = datetime.now()
     today = now.strftime("%Y-%m-%d")
     hook = HOOKS[now.toordinal() % len(HOOKS)]
+    import os as _os
+    _axis_date = _os.environ.get("AXIS_DATE") or today
+    outdir = OUT_ROOT / _axis_date
+    outdir.mkdir(parents=True, exist_ok=True)
 
-    outdir = OUT_ROOT / today
+
     outdir.mkdir(parents=True, exist_ok=True)
 
     labels = [f"Rank {i}" for i in range(10, 0, -1)]

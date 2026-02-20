@@ -1,36 +1,56 @@
-﻿import os, subprocess, sys, shutil
-from datetime import datetime, timedelta
-from pathlib import Path
+﻿import os, subprocess, sys, datetime, pathlib
 
-ROOT = Path(r"C:\AXIS_YT")
-OUT = ROOT / "out"
-LOGDIR = ROOT / "logs"
-LOGDIR.mkdir(parents=True, exist_ok=True)
+ROOT = pathlib.Path(r"C:\AXIS_YT")
 
-os.environ["AXIS_FFMPEG"] = r"C:\AXIS_YT\bin\ffmpeg.exe"
-os.environ["IMAGEIO_FFMPEG_EXE"] = os.environ["AXIS_FFMPEG"]
+def axis_date():
+    s = os.environ.get("AXIS_DATE")
+    return s if s else datetime.date.today().isoformat()
 
-today = datetime.now().strftime("%Y-%m-%d")
-yday  = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
+AXIS_DATE = axis_date()
+OUT = ROOT / "out" / AXIS_DATE
+OUT.mkdir(parents=True, exist_ok=True)
 
-t_out = OUT / today
-y_out = OUT / yday
-t_out.mkdir(parents=True, exist_ok=True)
+LOGS = ROOT / "logs"
+LOGS.mkdir(exist_ok=True)
+LOG = LOGS / f"{datetime.date.today().isoformat()}.log"
 
-log = LOGDIR / f"daily_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+PY = str(ROOT/"venv/Scripts/python.exe")
 
-cmd = [r"C:\AXIS_YT\venv\Scripts\python.exe", r"C:\AXIS_YT\daily.py"]
+def run(cmd, extra_env=None):
+    env = os.environ.copy()
+    if extra_env:
+        env.update(extra_env)
+    with open(LOG, "a", encoding="utf-8") as f:
+        f.write(f"\n$ {' '.join(cmd)}\n")
+        f.flush()
+        p = subprocess.run(cmd, stdout=f, stderr=f, text=True, env=env)
+        return p.returncode
 
-with log.open("w", encoding="utf-8") as f:
-    p = subprocess.run(cmd, cwd=str(ROOT), stdout=f, stderr=subprocess.STDOUT, timeout=600)
+# ① 生成（存在すればSKIP）
+if not (OUT / "short.mp4").exists():
+    rc = run([PY, str(ROOT/"daily.py")], {"AXIS_DATE": AXIS_DATE})
+    if rc != 0: sys.exit(rc)
 
-if p.returncode != 0:
-    src = y_out / "short.mp4"
-    dst = t_out / "short.mp4"
-    if src.exists():
-        shutil.copy(src, dst)
-        with (t_out/"meta.txt").open("w",encoding="utf-8") as m:
-            m.write("fallback=previous_day\n")
-        sys.exit(0)
+# ② ガード：生成物必須
+if not (OUT / "short.mp4").exists():
+    print(f"AXIS_DAILY_EXIT=2 missing short.mp4 in {OUT}")
+    sys.exit(2)
 
-sys.exit(p.returncode)
+# ③ CTR注入
+rc = run([PY, str(ROOT/"meta_patch.py")], {"AXIS_DATE": AXIS_DATE})
+if rc != 0: sys.exit(rc)
+
+# ④ ガード：meta必須
+if not (OUT / "meta.json").exists():
+    print(f"AXIS_DAILY_EXIT=2 missing meta.json in {OUT}")
+    sys.exit(2)
+
+# ⑤ 投稿（uploaded.json が無ければ実行）
+if not (OUT / "uploaded.json").exists():
+    rc = run([PY, str(ROOT/"upload.py")], {"AXIS_DATE": AXIS_DATE})
+    if rc != 0:
+        rc = run([PY, str(ROOT/"upload.py")], {"AXIS_DATE": AXIS_DATE})
+        if rc != 0: sys.exit(rc)
+
+print("AXIS_DAILY_EXIT=0")
+sys.exit(0)
