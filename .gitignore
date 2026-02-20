@@ -17,3 +17,7 @@ client_secret.json
 token.json
 *.pem
 .env
+
+secrets/
+client_secret*.json
+token*.json
