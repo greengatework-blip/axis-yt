@@ -1,5 +1,13 @@
 ﻿import os
-os.environ["IMAGEIO_FFMPEG_EXE"] = os.getenv("AXIS_FFMPEG")
+import shutil
+
+ff = shutil.which("ffmpeg")
+if not ff:
+    import imageio_ffmpeg as i
+    ff = i.get_ffmpeg_exe()
+
+os.environ["IMAGEIO_FFMPEG_EXE"] = ff
+
 
 import matplotlib
 matplotlib.use("Agg")  # 無人運用固定
