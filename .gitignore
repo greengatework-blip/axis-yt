@@ -20,4 +20,10 @@ token.json
 
 secrets/
 client_secret*.json
-token*.json
+token*.json# runtime outputs
+out/
+logs/
+data/metrics.csv
+data/metrics.csv.bak_*
+token.json
+reauth.py

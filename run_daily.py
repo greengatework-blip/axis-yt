@@ -53,4 +53,20 @@ if not (OUT / "uploaded.json").exists():
         if rc != 0: sys.exit(rc)
 
 print("AXIS_DAILY_EXIT=0")
-sys.exit(0)
+# --- post-upload: fetch views (non-fatal) ---
+try:
+    import subprocess
+    print("\n$ "+str(PY)+" "+str(ROOT/"fetch_views.py"))
+    subprocess.run([PY, str(ROOT/"fetch_views.py")], check=False)
+except Exception as e:
+    print("WARN: fetch_views failed:", e)
+    # --- post-upload: append daily metrics (non-fatal) ---
+try:
+    import subprocess
+    print("\n$ "+str(PY)+" "+str(ROOT/"append_metrics.py"))
+    subprocess.run([PY, str(ROOT/"append_metrics.py")], check=False)
+except Exception as e:
+    print("WARN: append_metrics failed:", e)
+    sys.exit(0)
+
+

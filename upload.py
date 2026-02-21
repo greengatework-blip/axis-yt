@@ -13,7 +13,7 @@ ROOT = Path("C:/AXIS_YT")
 CLIENT_SECRET = ROOT / "client_secret.json"
 TOKEN = ROOT / "token.json"
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]  # upload only
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.readonly"]  # upload + read stats
 
 
 def utc_now_iso() -> str:
