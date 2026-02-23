@@ -1,0 +1,1 @@
+print("solar stub OK")
