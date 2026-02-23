@@ -135,6 +135,18 @@ def make_frame(rank_vals, labels, title, hook_text=None, source_text=None, top3=
     return img
 
 
+
+# --- EXPERIMENT_TAGS ---
+THEMES = ["cost_of_living","rent_index","groceries","transport","safety"]
+HOOKS  = ["Prices are exploding","Can you afford this city?","This will shock you","Top cities ranked","Living costs revealed"]
+VARIANTS = ["clean","bold","minimal","flash"]
+
+import random
+theme = random.choice(THEMES)
+hook_tag = random.choice(HOOKS)
+variant = random.choice(VARIANTS)
+# --- /EXPERIMENT_TAGS ---
+
 def main():
     # Local (JST on your machine)
     now = datetime.now()
@@ -182,6 +194,9 @@ def main():
     )
 
     meta = {
+    "theme": theme,
+    "hook": hook_tag,
+    "variant": variant,
         "date": today,
         "video": str(mp4),
         "title": f"Daily Rank — {today}",
@@ -198,3 +213,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

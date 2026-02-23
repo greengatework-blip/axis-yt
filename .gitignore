@@ -1,34 +1,36 @@
-﻿# Python
-venv/
+﻿# --- Python ---
 __pycache__/
 *.pyc
-
-# Outputs / logs
-out/
-logs/
-*.mp4
-
-# ffmpeg bin（各PCで配置）
-bin/
-
-# Secrets
-client_secret*.json
-client_secret.json
-token.json
-*.pem
-.env
-
-secrets/
-client_secret*.json
-token*.json
-
+*.pyo
+*.pyd
+.venv/
 venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# --- AXIS runtime outputs ---
 out/
 logs/
+data/
 secrets/
 *.mp4
+*.wav
+*.png
+*.jpg
+*.jpeg
+
+# --- YouTube OAuth / tokens (NEVER COMMIT) ---
 token*.json
-client_secret.json
-C:\AXIS_SPACE\out\
-C:\AXIS_SOLAR\out\
-C:\AXIS_FIN_WEB\site\
+client_secret*.json
+
+# --- local/editor ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- safety: ignore generated web roots (if created locally) ---
+AXIS_WEB_ROOT/
+site/
